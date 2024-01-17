@@ -14,13 +14,13 @@ class Converter:
 
     def __init__(self):
         self.__conversion_methods = {
-            "doc": self.__doc_to_pdf, "docx": self.__docx_to_pdf,
-            "xls": self.__xls_to_pdf, "xlsx": self.__xlsx_to_pdf,
-            "ppt": self.__ppt_to_pdf, "pptx": self.__pptx_to_pdf,
-            "png": self.__png_to_pdf, "jpg": self.__jpg_to_pdf,
-            "jpeg": self.__jpeg_to_pdf, "bmp": self.__bmp_to_pdf,
-            "eps": self.__eps_to_pdf, "gif": self.__gif_to_pdf,
-            "txt": self.__txt_to_pdf, "rtf": self.__rtf_to_pdf,
+            "doc":  self.__doc_to_pdf,   "docx": self.__docx_to_pdf,
+            "xls":  self.__xls_to_pdf,   "xlsx": self.__xlsx_to_pdf,
+            "ppt":  self.__ppt_to_pdf,   "pptx": self.__pptx_to_pdf,
+            "png":  self.__png_to_pdf,   "jpg":  self.__jpg_to_pdf,
+            "jpeg": self.__jpeg_to_pdf,  "bmp":  self.__bmp_to_pdf,
+            "eps":  self.__eps_to_pdf,   "gif":  self.__gif_to_pdf,
+            "txt":  self.__txt_to_pdf,   "rtf":  self.__rtf_to_pdf,
             "html": self.__html_to_pdf,
         }
 
