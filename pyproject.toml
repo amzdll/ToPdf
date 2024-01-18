@@ -9,7 +9,11 @@ readme = "README.md"
 python = "^3.10"
 pypdf2 = "^3.0.1"
 fastapi = "^0.109.0"
-pypdf4 = "^1.27.0"
+docx2pdf = "^0.1.8"
+img2pdf = "^0.5.1"
+pillow = "^10.2.0"
+uvicorn = "^0.26.0"
+python-multipart = "^0.0.6"
 
 
 [build-system]
