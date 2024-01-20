@@ -1,18 +1,23 @@
+import base64
 from io import BytesIO
-from typing import IO
+import io
 import pathlib
 import PyPDF2
+from fpdf import FPDF
 from PIL import Image
+from typing import Callable
+import docx2pdf
 
 
-# Converter for DOC, DOCX, XLS, XLSX, PPT, PPTX, PNG, JPG, JPEG, BMP, EPS, GIF, TXT, RTF, HTML files to PDF
+# Converter for DOC, DOCX, XLS, XLSX, PPT, PPTX, EPS, GIF, TXT, RTF, HTML files to PDF
 class Converter:
     __pdf_reader: PyPDF2.PdfReader
     __pdf_merger: PyPDF2.PdfMerger = PyPDF2.PdfMerger()
     __pdf_writer: PyPDF2.PdfWriter = PyPDF2.PdfWriter()
 
-    __conversion_methods: dict = {}
+    __conversion_methods: dict[str, Callable]
     __imgs_formats: tuple = ("jpg", "jpeg", "png", "bmp")
+    __docs_formats: tuple = ("doc", "docx")
 
     def __init__(self):
         self.__conversion_methods = {
@@ -27,14 +32,10 @@ class Converter:
     # Methods for convert in_file to pdf
     @staticmethod
     def __img_to_pdf(source_data, result_data: BytesIO) -> None:
-        print("hui")
         with Image.open(source_data) as image:
             if image.mode == "RGBA":
                 image.convert("RGB")
             image.save(result_data, format="PDF")
-        # path_to_save = "/Users/glenpoin/W/Projects/Python/ToPdf/converter/result.pdf"
-        # with open(path_to_save, 'wb') as output_file:
-        #     output_file.write(result_data.getvalue())
 
     #   fix
     @staticmethod
@@ -45,13 +46,13 @@ class Converter:
             gif.show()
 
     @staticmethod
-    def __doc_to_pdf(source_file, result_file: IO) -> IO:
+    def __doc_to_pdf(source_file, result_file: BytesIO) -> None:
         print("doc")
-        return result_file
 
     @staticmethod
-    def __docx_to_pdf(file):
+    def __docx_to_pdf(source_data, result_data: BytesIO) -> None:
         print("docx")
+        # result_data = docx2pdf.convert(source_data)
 
     @staticmethod
     def __xls_to_pdf(file):
@@ -73,9 +74,32 @@ class Converter:
     def __eps_to_pdf(file):
         print("eps")
 
+    #  fix: empty pdf, data is clear
     @staticmethod
-    def __txt_to_pdf(file):
-        print("txt")
+    def __txt_to_pdf(source_data: BytesIO, result_data: BytesIO) -> BytesIO:
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=14)
+        pdf.write(5, source_data.read().decode("utf-8"))
+        pdf_output = pdf.output(dest='S').encode('utf-8')
+        result_data.seek(0)
+        result_data.write(pdf_output)
+        result_data.seek(0)
+        with open("result.pdf", "wb") as result_file:
+            result_file.write(result_data.getvalue())
+
+        return result_data
+
+        # pdf = FPDF()
+        # pdf.add_page()
+        # pdf.set_font("Arial", size=14)
+        # pdf.write(5, source_data.read().decode("utf-8"))
+        # # pdf.output("fdsa.pdf")
+        # pdf_output = pdf.output(dest='S')
+        # result_data = BytesIO(pdf_output.encode('utf-8'))
+        # result_data.seek(0)
+        # with open("result.pdf", "wb") as ffsda:
+        #     ffsda.write(result_data.getvalue())
 
     @staticmethod
     def __rtf_to_pdf(file):
@@ -103,8 +127,9 @@ class Converter:
         return result_data
 
 
-# path = "/tests/test_img.png"
-# converter = Converter()
+if __name__ == "__main__":
+    converter = Converter()
 
-# rd = converter.convert(source_file=path)
-
+    path = "/Users/glenpoin/W/Projects/Python/ToPdf/tests/resources/test.txt"
+    f = open(path, "rb")
+    s_data = converter.convert(path, f)
