@@ -747,6 +747,20 @@ slack = ["slack-sdk"]
 telegram = ["requests"]
 
 [[package]]
+name = "types-fpdf2"
+version = "2.7.7.20240106"
+description = "Typing stubs for fpdf2"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "types-fpdf2-2.7.7.20240106.tar.gz", hash = "sha256:96214b1ab3cc417e835086021a05ee5e834539494be353097e24485a897e1015"},
+    {file = "types_fpdf2-2.7.7.20240106-py3-none-any.whl", hash = "sha256:cb62ac4b278c735c1820d4745bf57a48da18b5247e0302398e4d142d5af2339f"},
+]
+
+[package.dependencies]
+types-Pillow = ">=9.2.0"
+
+[[package]]
 name = "types-pillow"
 version = "10.2.0.20240111"
 description = "Typing stubs for Pillow"
@@ -869,4 +883,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "6f46c9a97d0a8b559b9d8ff02de0c8d1397104bd61bb681af0af3e2d527422d3"
+content-hash = "7036ddcb951116d4cc2c37819c0eccfc895d58ab516f21d3f5c495fb51ae654d"
