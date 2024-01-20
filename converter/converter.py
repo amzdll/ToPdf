@@ -1,8 +1,13 @@
-import tempfile
-from io import BytesIO
+# Utils
 import pathlib
+import tempfile
 import PyPDF2
+
+#  Conversion
 from PIL import Image
+
+# Typing
+from io import BytesIO
 from typing import Callable, BinaryIO
 
 
@@ -14,7 +19,6 @@ class Converter:
 
     __conversion_methods: dict[str, Callable]
     __imgs_formats: tuple = ("jpg", "jpeg", "png", "bmp")
-    __docs_formats: tuple = ("doc", "docx")
 
     def __init__(self):
         self.__conversion_methods = {
@@ -27,7 +31,6 @@ class Converter:
         }
 
     # Methods for convert in_file to pdf
-
     @staticmethod
     def __change_image_size(image_size: tuple) -> tuple[int, int]:
         return ((image_size[0] / 495) * image_size
@@ -60,9 +63,8 @@ class Converter:
         print("doc")
 
     @staticmethod
-    def __docx_to_pdf(source_data, result_data: BytesIO) -> None:
-        print("docx")
-        # result_data = docx2pdf.convert(source_data)
+    def __docx_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
+        ...
 
     @staticmethod
     def __xls_to_pdf(file):
@@ -113,8 +115,8 @@ class Converter:
         #     ffsda.write(result_data.getvalue())
 
     @staticmethod
-    def __rtf_to_pdf(file):
-        print("rtf")
+    def __rtf_to_pdf(source_data: BytesIO, result_data: BytesIO) -> BytesIO:
+        ...
 
     @staticmethod
     def __html_to_pdf(file):
@@ -137,25 +139,8 @@ class Converter:
             self.__pdf_writer.write(f)
         return temporary_file
 
-    def __add_page(self, file) -> None:
-        self.__pdf_reader = PyPDF2.PdfReader(file)
-        page_count = len(self.__pdf_reader.pages)
-        print(page_count)
-
     def convert(self, file_name: str, source_data: BinaryIO) -> BytesIO:
         result_data = BytesIO()
         self.__conversion_methods[self.__extract_filetype(file_name)](source_data, result_data)
         return result_data
 
-
-converter = Converter()
-path = "/home/freiqq/Projects/Python/ToPdf/tests/resources/test.jpeg"
-with open(path, "rb") as f:
-    converter.convert("test.jpeg", f)
-
-# if __name__ == "__main__":
-#     converter = Converter()
-#
-#     path = "/Users/glenpoin/W/Projects/Python/ToPdf/tests/resources/test.txt"
-#     f = open(path, "rb")
-#     s_data = converter.convert(path, f)
