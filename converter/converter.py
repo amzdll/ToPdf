@@ -1,5 +1,4 @@
 # Utils
-import pathlib
 import tempfile
 import PyPDF2
 
@@ -60,70 +59,46 @@ class Converter:
 
     @staticmethod
     def __doc_to_pdf(source_file, result_file: BytesIO) -> None:
-        print("doc")
+        ...
 
     @staticmethod
     def __docx_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
         ...
 
     @staticmethod
-    def __xls_to_pdf(file):
-        print("xls")
-
-    @staticmethod
-    def __xlsx_to_pdf(file):
-        print("xlsx")
-
-    @staticmethod
-    def __ppt_to_pdf(file):
-        print("ppt")
-
-    @staticmethod
-    def __pptx_to_pdf(file):
-        print("pptx")
-
-    @staticmethod
-    def __eps_to_pdf(file):
-        print("eps")
-
-    #  fix: empty pdf, data is clear
-    @staticmethod
-    def __txt_to_pdf(source_data: BytesIO, result_data: BytesIO) -> BytesIO:
-        return BytesIO()
-        # pdf = FPDF()
-        # pdf.add_page()
-        # pdf.set_font("Arial", size=14)
-        # pdf.write(5, source_data.read().decode("utf-8"))
-        # pdf_output = pdf.output(dest='S').encode('utf-8')
-        # result_data.seek(0)
-        # result_data.write(pdf_output)
-        # result_data.seek(0)
-        # with open("result.pdf", "wb") as result_file:
-        #     result_file.write(result_data.getvalue())
-        #
-        # return result_data
-
-        # pdf = FPDF()
-        # pdf.add_page()
-        # pdf.set_font("Arial", size=14)
-        # pdf.write(5, source_data.read().decode("utf-8"))
-        # # pdf.output("fdsa.pdf")
-        # pdf_output = pdf.output(dest='S')
-        # result_data = BytesIO(pdf_output.encode('utf-8'))
-        # result_data.seek(0)
-        # with open("result.pdf", "wb") as ffsda:
-        #     ffsda.write(result_data.getvalue())
-
-    @staticmethod
-    def __rtf_to_pdf(source_data: BytesIO, result_data: BytesIO) -> BytesIO:
+    def __xls_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
         ...
 
     @staticmethod
-    def __html_to_pdf(file):
-        print("html")
+    def __xlsx_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
+        ...
 
-    def __extract_filetype(self, file_path: str) -> str:
-        file_type = pathlib.Path(file_path).suffix[1::]
+    @staticmethod
+    def __ppt_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
+        ...
+
+    @staticmethod
+    def __pptx_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
+        ...
+
+    @staticmethod
+    def __eps_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
+        ...
+
+    @staticmethod
+    def __txt_to_pdf(source_data: BytesIO, result_data: BytesIO) -> None:
+        ...
+
+    @staticmethod
+    def __rtf_to_pdf(source_data: BytesIO, result_data: BytesIO) -> None:
+        ...
+
+    @staticmethod
+    def __html_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
+        ...
+
+    def __choose_conversion_method(self, file_path: str) -> str:
+        file_type = file_path.split(".")[::-1][0]
         if file_type in self.__conversion_methods:
             return file_type
         elif file_type in self.__imgs_formats:
@@ -133,7 +108,7 @@ class Converter:
 
     def __create_temporary_pdf(self):
         temporary_file = tempfile.NamedTemporaryFile(mode="wb", suffix="pdf")
-        page = PyPDF2.PageObject.create_blank_page(width=595.276, height=841.891)
+        page = PyPDF2.PageObject.create_blank_page(width=595, height=842)
         self.__pdf_writer.add_page(page)
         with open(temporary_file.name, "wb") as f:
             self.__pdf_writer.write(f)
@@ -141,6 +116,5 @@ class Converter:
 
     def convert(self, file_name: str, source_data: BinaryIO) -> BytesIO:
         result_data = BytesIO()
-        self.__conversion_methods[self.__extract_filetype(file_name)](source_data, result_data)
+        self.__conversion_methods[self.__choose_conversion_method(file_name)](source_data, result_data)
         return result_data
-
