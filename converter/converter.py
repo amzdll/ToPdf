@@ -30,19 +30,10 @@ class Converter:
         }
 
     # Methods for convert in_file to pdf
-    @staticmethod
-    def __change_image_size(image_size: tuple) -> tuple[int, int]:
-        return ((image_size[0] / 495) * image_size
-                if image_size[0] >= image_size[1]
-                else (image_size[0] / 742) * image_size)
-
     def __img_to_pdf(self, source_data, result_data: BytesIO) -> None:
         with Image.open(source_data) as image:
             if image.mode == "RGBA":
                 image.convert("RGB")
-
-            if image.size[0] > 495 or image.size[1] > 742:
-                image.resize(self.__change_image_size(image.size))
 
             background = Image.new(mode="RGB", size=(595, 842), color="white")
             place: tuple[int, int] = (int((background.size[0] - image.size[0]) / 2),
