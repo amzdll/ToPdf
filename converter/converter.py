@@ -1,111 +1,80 @@
+# Converter for DOC, DOCX, XLS, XLSX, PPT, PPTX, EPS, GIF, TXT, RTF, HTML files to PDF
+
 # Utils
-import tempfile
-import PyPDF2
+import magic
 
 #  Conversion
 from PIL import Image
 
 # Typing
 from io import BytesIO
-from typing import Callable, BinaryIO
+from typing import BinaryIO, Type
+
+from abc import ABC, abstractmethod
 
 
-# Converter for DOC, DOCX, XLS, XLSX, PPT, PPTX, EPS, GIF, TXT, RTF, HTML files to PDF
-class Converter:
-    __pdf_reader: PyPDF2.PdfReader
-    __pdf_merger: PyPDF2.PdfMerger = PyPDF2.PdfMerger()
-    __pdf_writer: PyPDF2.PdfWriter = PyPDF2.PdfWriter()
-
-    __conversion_methods: dict[str, Callable]
-    __imgs_formats: tuple = ("jpg", "jpeg", "png", "bmp")
+class PdfConverter:
+    __imgs_formats: tuple[str, ...]
+    __file_converters: dict[str, Type['__AbstractConverter']]
+    __converter: Type['__AbstractConverter']
+    test_map: dict[tuple[str, ...], Type['__AbstractConverter']]
 
     def __init__(self):
-        self.__conversion_methods = {
-            "img": self.__img_to_pdf, "gif": self.__gif_to_pdf,
-            "doc": self.__doc_to_pdf, "docx": self.__docx_to_pdf,
-            "xls": self.__xls_to_pdf, "xlsx": self.__xlsx_to_pdf,
-            "ppt": self.__ppt_to_pdf, "pptx": self.__pptx_to_pdf,
-            "eps": self.__eps_to_pdf, "txt": self.__txt_to_pdf,
-            "rtf": self.__rtf_to_pdf, "html": self.__html_to_pdf
+        self.__imgs_formats = ("jpg", "jpeg", "png", "bmp")
+        self.__file_converters = {
+            "img": self.__ImageConverter(),
+            # "other_file_type": self.OtherConverter, ...
         }
+        self.test_map = {}
 
-    # Methods for convert in_file to pdf
-    def __img_to_pdf(self, source_data, result_data: BytesIO) -> None:
-        with Image.open(source_data) as image:
-            if image.mode == "RGBA":
-                image.convert("RGB")
-
-            background = Image.new(mode="RGB", size=(595, 842), color="white")
-            place: tuple[int, int] = (int((background.size[0] - image.size[0]) / 2),
-                                      int((background.size[1] - image.size[1]) / 2))
-            background.paste(image, place)
-            background.save(result_data, format="PDF")
-
-    @staticmethod
-    def __gif_to_pdf(source_data, result_data: BytesIO) -> None:
-        with Image.open(source_data) as gif:
-            gif.save(result_data, save_all=True, append_images=gif.n_frames * [gif],
-                     duration=gif.info['duration'], loop=0, format="PDF")
-            gif.show()
-
-    @staticmethod
-    def __doc_to_pdf(source_file, result_file: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __docx_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __xls_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __xlsx_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __ppt_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __pptx_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __eps_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __txt_to_pdf(source_data: BytesIO, result_data: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __rtf_to_pdf(source_data: BytesIO, result_data: BytesIO) -> None:
-        ...
-
-    @staticmethod
-    def __html_to_pdf(source_data: BinaryIO, result_data: BytesIO) -> None:
-        ...
-
-    def __choose_conversion_method(self, file_path: str) -> str:
-        file_type = file_path.split(".")[::-1][0]
-        if file_type in self.__conversion_methods:
+    def __choose_converter(self, source_data: BinaryIO) -> str:
+        file_type: str = (magic.from_buffer(source_data.read(), mime=True)).split("/")[-1]
+        if file_type in self.__file_converters:
             return file_type
         elif file_type in self.__imgs_formats:
             return "img"
         else:
             return ""
 
-    def __create_temporary_pdf(self):
-        temporary_file = tempfile.NamedTemporaryFile(mode="wb", suffix="pdf")
-        page = PyPDF2.PageObject.create_blank_page(width=595, height=842)
-        self.__pdf_writer.add_page(page)
-        with open(temporary_file.name, "wb") as f:
-            self.__pdf_writer.write(f)
-        return temporary_file
+    def convert(self, source_data: BinaryIO) -> BytesIO:
+        converter_type: str = self.__choose_converter(source_data)
+        self.__converter = self.__file_converters[converter_type]
+        return self.__converter.convert(source_data)
 
-    def convert(self, file_name: str, source_data: BinaryIO) -> BytesIO:
-        result_data = BytesIO()
-        self.__conversion_methods[self.__choose_conversion_method(file_name)](source_data, result_data)
-        return result_data
+    class __AbstractConverter(ABC):
+        supported_types: tuple[str, ...]
+
+        @abstractmethod
+        def __init__(self):
+            ...
+
+        @abstractmethod
+        def convert(self, source_data: BinaryIO) -> BytesIO:
+            ...
+
+    class __ImageConverter(__AbstractConverter):
+        supported_formats: tuple[str, ...]
+
+        def __init__(self):
+            self.supported_formats = ("jpg", "jpeg", "png", "bmp")
+            self.__page_size: tuple[int, int] = (595, 842)
+
+        def convert(self, source_data: BinaryIO) -> BytesIO:
+            result_data: BytesIO = BytesIO()
+            with Image.open(source_data) as image:
+                if image.mode == "RGBA":
+                    image.convert("RGB")
+
+                background = Image.new(mode="RGB", size=self.__page_size, color="white")
+                place: tuple[int, int] = (int((background.size[0] - image.size[0]) / 2),
+                                          int((background.size[1] - image.size[1]) / 2))
+                background.paste(image, place)
+                background.save(result_data, format="PDF")
+            return result_data
+
+
+converter = PdfConverter()
+with (open("/Users/glenpoin/W/Projects/Python/ToPdf/images.png", "rb") as f,
+      open("result.pdf", "wb") as f2):
+    a = converter.convert(f)
+    f2.write(a.getvalue())

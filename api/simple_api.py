@@ -2,10 +2,10 @@ import io
 import uvicorn
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
-from converter.converter import Converter
+from converter.pdfconverter import PdfConverter
 
 app = FastAPI()
-converter = Converter()
+converter = PdfConverter()
 
 
 class ResultFile:
@@ -19,7 +19,7 @@ app.result_file = ResultFile()
 @app.post("/upload/")
 async def upload(file: UploadFile):
     app.result_file.filename = file.filename
-    app.result_file.data = converter.convert(file.filename, file.file)
+    app.result_file.data = converter.convert(file.file)
     return ["ok"]
 
 
