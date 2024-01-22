@@ -8,16 +8,16 @@ from PIL import Image
 
 # Typing
 from io import BytesIO
-from typing import BinaryIO, Type
+from typing import BinaryIO
 
 from abc import ABC, abstractmethod
 
 
 class PdfConverter:
     __imgs_formats: tuple[str, ...]
-    __file_converters: dict[str, Type['__AbstractConverter']]
-    __converter: Type['__AbstractConverter']
-    test_map: dict[tuple[str, ...], Type['__AbstractConverter']]
+    __file_converters: dict[str, '__AbstractConverter']
+    __converter: '__AbstractConverter'
+    test_map: dict[tuple[str, ...], '__AbstractConverter']
 
     def __init__(self):
         self.__imgs_formats = ("jpg", "jpeg", "png", "bmp")
@@ -54,10 +54,11 @@ class PdfConverter:
 
     class __ImageConverter(__AbstractConverter):
         supported_formats: tuple[str, ...]
+        __page_size: tuple[int, int]
 
         def __init__(self):
             self.supported_formats = ("jpg", "jpeg", "png", "bmp")
-            self.__page_size: tuple[int, int] = (595, 842)
+            self.__page_size = (595, 842)
 
         def convert(self, source_data: BinaryIO) -> BytesIO:
             result_data: BytesIO = BytesIO()
