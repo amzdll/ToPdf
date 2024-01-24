@@ -22,6 +22,8 @@ python-docx = "^1.1.0"
 reportlab = "^4.0.9"
 pypandoc = "^1.12"
 python-magic-bin = "^0.4.14"
+green = "^4.0.0"
+flake8 = "^7.0.0"
 
 
 [build-system]

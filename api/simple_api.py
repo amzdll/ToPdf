@@ -2,7 +2,7 @@ import io
 import uvicorn
 from fastapi import FastAPI, UploadFile
 from fastapi.responses import StreamingResponse
-from converter.pdfconverter import PdfConverter
+from converter.converter import PdfConverter
 
 app = FastAPI()
 converter = PdfConverter()
