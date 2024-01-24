@@ -20,20 +20,20 @@ check: mypy_check flake8_check
 
 mypy_check:
 	$(call print_title, Running MyPy )
-	$(call print_text,converter.py:) &&  mypy converter || true
-	$(call print_text,simple_api.py:) &&  mypy api || true
+	@echo "converter.py:"  &&  mypy converter || true
+	@echo "simple_api.py:"  &&  mypy api || true
 
 flake8_check:
 	$(call print_title,Running Flake8)
-	$(call print_text,converter.py:) && $(POETRY) flake8 converter || true
-	$(call print_text,simple_api.py:) && $(POETRY) flake8 || true
+	@echo "converter.py:" && $(POETRY) flake8 converter || true
+	@echo "simple_api.py:" && $(POETRY) flake8 || true
 
 test:
 	$(call print_title, Running Unit )
-	@$(call print_text,test_converter.py:) && green test/test_converter.py || true
+	@echo "test_converter.py:" && green test/test_converter.py || true
 
 end_output:
-	@echo "$(COLOR_S)==========================================================$(COLOR_E)"
+	@echo "$(COLOR_S)===========================================================$(COLOR_E)"
 
 clear:
 	clear
