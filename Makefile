@@ -1,28 +1,26 @@
+BOLD = \033[1m
+GREEN = \033[92m
+RED = \033[91m
+RESET = \033[0m
+
+WIDTH := $(shell echo "scale=0; $$(tput cols) / 2" | bc)
+
 POETRY = poetry run
-#  colors
-COLOR_S = \033[92m\033[1m
-COLOR_ERR = \033[91m\033[1m
-COLOR_E = \033[0m
 
-#  other
-WIDTH := $(shell echo "scale=0; $(shell tput cols) / 2" | bc)
-
-.PHONY: all clear check test mypy flake8
+.PHONY: all clear check test mypy flake8 install
 
 define print_title
-	@echo "$(COLOR_S)"
+	@echo "$(GREEN)"
 	@printf %$$(($(WIDTH) - $$(echo -n '$(1) - 1' | wc -c) / 2))s | tr " " "="
-	@printf " %s " "$(1)"
+	@printf "$(BOLD) %s $(RESET)$(GREEN)" "$(1)"
 	@printf %$$(($(WIDTH) - $$(echo -n '$(1) - 1' | wc -c) / 2))s | tr " " "="
-	@echo "$(COLOR_E)"
+	@echo "$(RESET)"
 endef
 
-
-
-all:clear test check
-	@echo "$(COLOR_S)"
-	@printf %$$(($(shell tput cols) - 2))s | tr " " "="
-	@echo "$(COLOR_E)"
+all: clear test check
+	@echo "$(GREEN)"
+	@printf %$$(($$(tput cols) - 2))s | tr " " "="
+	@echo "$(RESET)"
 
 check: mypy flake8
 
@@ -32,20 +30,22 @@ test:
 
 mypy:
 	$(call print_title,Running MyPy)
-	@if $(POETRY) mypy --pretty ./ ./; then \
-        echo  "\n$(COLOR_S)SUCCESS $(COLOR_E)"; \
+	@if $(POETRY) mypy --pretty ./ ; then \
+        echo "\n$(GREEN)SUCCESS$(RESET)"; \
     else \
-        echo "\n$(COLOR_ERR)FAIL$(COLOR_E)"; \
+        echo "\n$(RED)FAIL$(RESET)"; \
     fi
-
 
 flake8:
 	$(call print_title,Running Flake8)
 	@if $(POETRY) flake8 ./; then \
-        echo  "\n$(COLOR_S)SUCCESS $(COLOR_E)"; \
+        echo "\n$(GREEN)$(BOLD)SUCCESS$(RESET)"; \
     else \
-        echo  "\n$(COLOR_ERR)FAIL$(COLOR_E)"; \
+        echo "\n$(RED)$(BOLD)FAIL$(RESET)"; \
     fi
+
+install:
+	@poetry install
 
 clear:
 	clear
