@@ -26,15 +26,16 @@ async def upload(file: UploadFile):
 @app.get("/download/")
 async def download():
     app.result_file.data.seek(0)
+    headers = {
+        "Content-Disposition":
+            'attachment;'
+            'filename="' + app.result_file.filename.split(".")[0] + '.pdf"',
+        "Content-Type": "application/pdf",
+    }
     return StreamingResponse(
         app.result_file.data,
         media_type="application/pdf",
-        headers={
-            "Content-Disposition":
-                'attachment;'
-                'filename="' + app.result_file.filename.split(".")[0] + '.pdf"',
-            "Content-Type": "application/pdf",
-        })
+        headers=headers)
 
 
 if __name__ == "__main__":
