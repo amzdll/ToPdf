@@ -1,6 +1,6 @@
 import pytest
 import tempfile
-from converter.converter import PdfConverter
+from src.converter.converter import PdfConverter
 
 
 @pytest.fixture

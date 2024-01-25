@@ -1,6 +1,6 @@
 BOLD = \033[1m
-GREEN = \033[92m
-RED = \033[91m
+GREEN = \x1B[32m
+RED = \x1B[31m
 RESET = \033[0m
 
 WIDTH := $(shell echo "scale=0; $$(tput cols) / 2" | bc)
@@ -11,15 +11,15 @@ POETRY = poetry run
 
 define print_title
 	@echo "$(GREEN)"
-	@printf %$$(($(WIDTH) - $$(echo -n '$(1) - 1' | wc -c) / 2))s | tr " " "="
+	@printf %$$(($(WIDTH) - $$(echo -n '$(1)' | wc -c) / 2))s | tr " " "_"
 	@printf "$(BOLD) %s $(RESET)$(GREEN)" "$(1)"
-	@printf %$$(($(WIDTH) - $$(echo -n '$(1) - 1' | wc -c) / 2))s | tr " " "="
+	@printf %$$(($(WIDTH) - $$(echo -n '$(1)' | wc -c) / 2))s | tr " " "_"
 	@echo "$(RESET)"
 endef
 
 all: clear test check
 	@echo "$(GREEN)"
-	@printf %$$(($$(tput cols) - 2))s | tr " " "="
+	@printf %$$(($$(tput cols) - 2))s | tr " " "‾"
 	@echo "$(RESET)"
 
 check: mypy flake8
@@ -48,4 +48,4 @@ install:
 	@poetry install
 
 clear:
-	clear
+	@clear

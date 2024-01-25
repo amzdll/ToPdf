@@ -1,7 +1,7 @@
 import unittest
 import tempfile
 
-from converter.converter import PdfConverter
+from src.converter.converter import PdfConverter
 
 
 class TestPdfConverter(unittest.TestCase):

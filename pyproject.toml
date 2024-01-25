@@ -24,6 +24,11 @@ pypandoc = "^1.12"
 python-magic-bin = "^0.4.14"
 green = "^4.0.0"
 flake8 = "^7.0.0"
+pytest = "^7.4.4"
+sqlalchemy = "^2.0.25"
+alembic = "^1.13.1"
+psycopg2-binary = "^2.9.9"
+python-dotenv = "^1.0.1"
 
 
 [build-system]
