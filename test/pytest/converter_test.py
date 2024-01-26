@@ -1,6 +1,6 @@
 import pytest
 import tempfile
-from src.converter.converter import PdfConverter
+from src.utils.converter import PdfConverter
 
 
 @pytest.fixture
@@ -18,8 +18,9 @@ def test_image_conversion(pdf_converter):
     result_file = tempfile.NamedTemporaryFile(suffix="pdf")
     expected_file = tempfile.NamedTemporaryFile(suffix="pdf")
 
-    with open("test/data/test.png", "rb") as test_data, \
-            open("test/data/result_png.pdf", "rb") as expected_data:
+    with open("test/data/test.png", "rb") as test_data, open(
+        "test/data/result_png.pdf", "rb"
+    ) as expected_data:
         result_file.write(pdf_converter.convert(test_data).getvalue())
         expected_file.write(expected_data.read())
 

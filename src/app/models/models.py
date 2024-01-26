@@ -1,4 +1,4 @@
-from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey
+from sqlalchemy import MetaData, Table, Column, Integer
 
 metadata = MetaData()
 
@@ -7,7 +7,6 @@ users = Table(
     metadata,
     Column("id", Integer, primary_key=True),
 )
-
 
 
 # engine  = sqlalchemy.create_engine(DATABASE_URL)

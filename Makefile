@@ -19,14 +19,16 @@ endef
 
 all: clear test check
 	@echo "$(GREEN)"
-	@printf %$$(($$(tput cols) - 2))s | tr " " "‾"
+	@printf %$$(($$(tput cols) - 2))s | tr " " "_"
 	@echo "$(RESET)"
 
 check: mypy flake8
 
 test:
 	$(call print_title,Running Tests)
+	@echo "$(GREEN)"
 	@$(POETRY) pytest -q || true
+	@echo "$(RESET)"
 
 mypy:
 	$(call print_title,Running MyPy)
