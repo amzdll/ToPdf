@@ -39,7 +39,7 @@ class PdfConverter:
             raise ValueError("Unsupported file format")
 
     def __create_file(self, file_name: str):
-        with open(f"{self.save_path + file_name}.pdf", "w"):
+        with open(f"{self.save_path + file_name}.pdf", "a"):
             ...
 
     def __save_data(self, file_name: str, data: BytesIO):

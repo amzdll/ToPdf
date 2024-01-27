@@ -7,7 +7,3 @@ users = Table(
     metadata,
     Column("id", Integer, primary_key=True),
 )
-
-
-# engine  = sqlalchemy.create_engine(DATABASE_URL)
-# metadata.create_all(engine)
