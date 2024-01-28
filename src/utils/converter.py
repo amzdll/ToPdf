@@ -85,10 +85,3 @@ class PdfConverter:
                 background.paste(image, place)
                 background.save(result_data, format="PDF")
             return result_data
-
-#
-# converter = PdfConverter("/home/freiqq/Projects/Python/ToPdf/src/app/db/temp_imgs_storage/")
-# with (open("/home/freiqq/Projects/Python/ToPdf/test/data/test.png", "rb") as f,
-#       open("result.pdf", "wb") as f2):
-#     a = converter.convert(f, "aboba")
-#     f2.write(a.getvalue())
