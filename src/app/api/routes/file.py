@@ -27,8 +27,8 @@ async def print_id(id: str):
     return {"message": "Hello World", "id": id}
 
 
-@router.post("/hui/")
-async def hui(
+@router.post("/test_name/")
+async def test_name(
     id: str,
     users_repo: UserRepository = Depends(get_repository(UserRepository))
 ):
