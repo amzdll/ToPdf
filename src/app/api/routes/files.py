@@ -11,6 +11,8 @@ from src.utils.converter import PdfConverter
 
 router = APIRouter()
 
+
+# todo: replace global path to relative
 converter = PdfConverter(
     "/home/freiqq/Projects/Python/ToPdf/src/app/db/temp_imgs_storage/"
 )
@@ -24,26 +26,9 @@ class ResultFile:
 result_file = ResultFile()
 
 
-@router.get("/")
-async def print_id(id: str):
-    return {"message": "Hello World", "id": id}
-
-
-@router.post("/test_name/")
-async def test_name(
-    id: str,
-    user_repository: UserRepository = Depends(),
-    session: AsyncSession = Depends(get_async_session)
-):
-    new_user = User(id=int(id))
-    await user_repository.create_user(session, new_user)
-
-    return {"message": "User added successfully"}
-
-
-
 @router.post("/upload/")
-async def upload(file: UploadFile):
+async def upload(id: str,
+                 file: UploadFile):
     result_file.filename = file.filename.split(".")[0]
     try:
         result_file.data = converter.convert(
