@@ -1,10 +1,12 @@
 import io
 
 from fastapi import APIRouter, UploadFile, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import StreamingResponse
 
-from src.app.api.dependencies.database import get_repository
+from src.app.api.dependencies.database import get_async_session
 from src.app.db.repositories.users import UserRepository
+from src.app.models.domains.user import User
 from src.utils.converter import PdfConverter
 
 router = APIRouter()
@@ -30,9 +32,14 @@ async def print_id(id: str):
 @router.post("/test_name/")
 async def test_name(
     id: str,
-    users_repo: UserRepository = Depends(get_repository(UserRepository))
+    user_repository: UserRepository = Depends(),
+    session: AsyncSession = Depends(get_async_session)
 ):
-    await users_repo.create_user(id=int(id))
+    new_user = User(id=int(id))
+    await user_repository.create_user(session, new_user)
+
+    return {"message": "User added successfully"}
+
 
 
 @router.post("/upload/")

@@ -1,20 +1,18 @@
-from src.app.db.queries import queries
-from src.app.db.repositories.base import BaseRepository
-from models.domain.user import User
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+
+from src.app.models.domains.user import User
 
 
-class UserRepository(BaseRepository):
-    async def create_user(
-            self,
-            *,
-            id: int
-    ) -> User:
-        user = User(id=id)
+class UserRepository:
+    async def create_user(self, session: AsyncSession, user: User) -> None:
+        async with session.begin():
+            session.add(user)
 
-        async with self.connection.transaction():
-            user_row = await queries.create_new_user(
-                self.connection,
-                id=user.id
-            )
+    async def get_user_by_id(self, session: AsyncSession, user_id: int):
+        statement = select(User).where(User.id == user_id)
+        result = await session.execute(statement)
+        return result.scalar()
 
-        return user.copy(update=dict(user_row))
+
+user_repo = UserRepository()
