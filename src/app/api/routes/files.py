@@ -1,53 +1,62 @@
-import io
+import datetime
+from datetime import datetime
 
 from fastapi import APIRouter, UploadFile, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.responses import StreamingResponse
 
 from src.app.api.dependencies.database import get_async_session
-from src.app.db.repositories.users import UserRepository
-from src.app.models.domains.user import User
+from src.app.db.repositories.files import FileRepository
+from src.app.models.domains.file import File
 from src.utils.converter import PdfConverter
 
 router = APIRouter()
 
-
 # todo: replace global path to relative
 converter = PdfConverter(
-    "/home/freiqq/Projects/Python/ToPdf/src/app/db/temp_imgs_storage/"
+    "/Users/glenpoin/W/Projects/Python/ToPdf/src/app/db/temp_imgs_storage/"
 )
 
 
-class ResultFile:
-    filename: str
-    data: io.BytesIO
-
-
-result_file = ResultFile()
-
-
 @router.post("/upload/")
-async def upload(id: str,
-                 file: UploadFile):
-    result_file.filename = file.filename.split(".")[0]
+async def upload(
+        id: str,
+        file: UploadFile,
+        file_repository: FileRepository = Depends(),
+        session: AsyncSession = Depends(get_async_session),
+):
+    filename: str = file.filename.split(".")[0]
     try:
-        result_file.data = converter.convert(
+        new_file = File(file_name=str(f"{filename}.pdf"), user_id=int(id), conversion_date=datetime.now())
+        await file_repository.create_file(session, new_file)
+        converter.convert(
             source_data=file.file,
-            result_name=f"{id + "_" + str(result_file.filename)}"
+            result_name=f"{id + "_" + str(filename)}"
         )
         return ["ok"]
     except ValueError:
         return ["This is all not ok..."]
 
 
+@router.get("/list/")
+async def list_files(
+        id: str,
+        file_repository: FileRepository = Depends(),
+        session: AsyncSession = Depends(get_async_session)
+) -> list[str]:
+    return [file.file_name for file in await file_repository.get_all_files(session, int(id))]
+
+
 @router.get("/download/")
-async def download():
-    result_file.data.seek(0)
-    headers = {
-        "Content-Disposition": "attachment;"
-                               'filename="' + result_file.filename.split(".")[0] + '.pdf"',
-        "Content-Type": "application/pdf",
-    }
+async def download(
+        id: str,
+        file_repository: FileRepository = Depends(),
+        session: AsyncSession = Depends(get_async_session)
+):
+    a = await file_repository.get_all_files(session, int(id))
+    for i in a:
+        print(i.file_name)
+    return ""
     return StreamingResponse(
         result_file.data, media_type="application/pdf", headers=headers
     )

@@ -27,6 +27,7 @@ def create_user_table() -> None:
 def create_file_info_table() -> None:
     op.create_table(
         "file_info",
+        sa.Column("id", sa.BIGINT, primary_key=True),
         sa.Column("file_name", sa.String, nullable=False),
         sa.Column("conversion_date", sa.DateTime, nullable=False),
         sa.Column(

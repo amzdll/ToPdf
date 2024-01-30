@@ -20,4 +20,4 @@ class UserRepository:
         return result.scalar()
 
 
-user_repo = UserRepository()
+user_repository = UserRepository()
