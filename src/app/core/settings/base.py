@@ -12,6 +12,7 @@ class BaseAppSettings(BaseSettings):
     app_env: AppEnvTypes = AppEnvTypes.dev
     database_url: PostgresDsn
     database_url_asyncpg: str
+    imgs_storage_path: str
 
     class Config:
         env_file = ".env"

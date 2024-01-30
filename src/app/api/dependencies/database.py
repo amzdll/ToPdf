@@ -12,7 +12,7 @@ settings = get_app_settings()
 
 engine = create_async_engine(
     url=settings.database_url_asyncpg,
-    echo=True
+    # echo=True
 )
 
 session_maker = async_sessionmaker(engine)

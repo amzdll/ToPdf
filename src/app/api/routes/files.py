@@ -1,41 +1,42 @@
 import datetime
 from datetime import datetime
 
+import sqlalchemy.exc
 from fastapi import APIRouter, UploadFile, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import StreamingResponse
 
 from src.app.api.dependencies.database import get_async_session
+from src.app.core.config import get_app_settings
 from src.app.db.repositories.files import FileRepository
 from src.app.models.domains.file import File
+from src.app.services.files import files_service
 from src.utils.converter import PdfConverter
 
 router = APIRouter()
 
-# todo: replace global path to relative
-converter = PdfConverter(
-    "/Users/glenpoin/W/Projects/Python/ToPdf/src/app/db/temp_imgs_storage/"
-)
+settings = get_app_settings()
+converter = PdfConverter(settings.imgs_storage_path)
 
 
 @router.post("/upload/")
 async def upload(
-        id: str,
+        user_id: str,
         file: UploadFile,
         file_repository: FileRepository = Depends(),
         session: AsyncSession = Depends(get_async_session),
 ):
-    filename: str = file.filename.split(".")[0]
     try:
-        new_file = File(file_name=str(f"{filename}.pdf"), user_id=int(id), conversion_date=datetime.now())
+        filename: str = await files_service.extract_filename(file.filename)
+        new_file = File(file_name=str(filename+".pdf"), user_id=int(user_id), conversion_date=datetime.now())
         await file_repository.create_file(session, new_file)
-        converter.convert(
-            source_data=file.file,
-            result_name=f"{id + "_" + str(filename)}"
-        )
-        return ["ok"]
+        await files_service.convert_file(user_id, filename, file.file)
+        return ["Ok"]
+    except sqlalchemy.exc.IntegrityError:
+        return ["Who is it?!"]
     except ValueError:
         return ["This is all not ok..."]
+    except FileNotFoundError:
+        return ["We're having trouble... Please wait"]
 
 
 @router.get("/list/")
@@ -57,6 +58,6 @@ async def download(
     for i in a:
         print(i.file_name)
     return ""
-    return StreamingResponse(
-        result_file.data, media_type="application/pdf", headers=headers
-    )
+    # return StreamingResponse(
+    #     result_file.data, media_type="application/pdf", headers=headers
+    # )
