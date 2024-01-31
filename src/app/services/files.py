@@ -1,7 +1,6 @@
 from typing import BinaryIO
 
 from src.app.core.config import get_app_settings
-from src.utils import converter
 from src.utils.converter import PdfConverter
 
 settings = get_app_settings()
@@ -23,7 +22,7 @@ class FilesService:
     ):
         self.__converter.convert(
             source_data=source_data,
-            result_name=f"{"user_id_" + user_id + "_" + str(filename)}")
+            result_name=f"user_id_{user_id}_{filename}.pdf")
 
 
 files_service = FilesService()

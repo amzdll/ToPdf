@@ -1,18 +1,15 @@
 # Converter for DOC, DOCX, XLS, XLSX, PPT,
 # PPTX, EPS, TXT, RTF, HTML files to PDF
-import os
 
-# Utils
-import magic  # type: ignore
-
-#  Conversion
-from PIL import Image
-
+from abc import ABC, abstractmethod
 # Typing
 from io import BytesIO
 from typing import BinaryIO
 
-from abc import ABC, abstractmethod
+# Utils
+import magic  # type: ignore
+#  Conversion
+from PIL import Image
 
 
 class PdfConverter:

@@ -1,5 +1,3 @@
-from typing import List
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -15,7 +13,8 @@ async def get_users(
         user_repository: UserRepository = Depends(),
         session: AsyncSession = Depends(get_async_session)
 ) -> list[int]:
-    return [user_id for user_id in await user_repository.get_all_users(session)]
+    users = await user_repository.get_all_users(session)
+    return [user.id for user in users]
 
 
 @router.post("/add_user/{id}")

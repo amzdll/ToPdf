@@ -1,4 +1,3 @@
-import datetime
 from datetime import datetime
 
 import sqlalchemy.exc
@@ -27,7 +26,11 @@ async def upload(
 ):
     try:
         filename: str = await files_service.extract_filename(file.filename)
-        new_file = File(file_name=str(filename+".pdf"), user_id=int(user_id), conversion_date=datetime.now())
+        new_file = (
+            File(file_name=str(filename),
+                 user_id=int(user_id),
+                 conversion_date=datetime.now())
+        )
         await file_repository.create_file(session, new_file)
         await files_service.convert_file(user_id, filename, file.file)
         return ["Ok"]
@@ -45,7 +48,8 @@ async def list_files(
         file_repository: FileRepository = Depends(),
         session: AsyncSession = Depends(get_async_session)
 ) -> list[str]:
-    return [file.file_name for file in await file_repository.get_all_files(session, int(id))]
+    files = await file_repository.get_all_files(session, int(id))
+    return [file.file_name for file in files]
 
 
 @router.get("/download/")

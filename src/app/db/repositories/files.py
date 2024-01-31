@@ -14,7 +14,9 @@ class FileRepository:
             session.add(file)
 
     @staticmethod
-    async def get_all_files(session: AsyncSession, user_id: int) -> Sequence[File]:
+    async def get_all_files(
+            session: AsyncSession, user_id: int
+    ) -> Sequence[File]:
         statement = select(File).filter(File.user_id == user_id)
         result = await session.execute(statement)
         return result.scalars().all()
