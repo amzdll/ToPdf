@@ -58,10 +58,4 @@ async def download(
         file_repository: FileRepository = Depends(),
         session: AsyncSession = Depends(get_async_session)
 ):
-    a = await file_repository.get_all_files(session, int(id))
-    for i in a:
-        print(i.file_name)
-    return ""
-    # return StreamingResponse(
-    #     result_file.data, media_type="application/pdf", headers=headers
-    # )
+    pass

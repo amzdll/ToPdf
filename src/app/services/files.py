@@ -22,7 +22,7 @@ class FilesService:
     ):
         self.__converter.convert(
             source_data=source_data,
-            result_name=f"user_id_{user_id}_{filename}.pdf")
+            result_name=f"user_id_{user_id}_{filename}")
 
 
 files_service = FilesService()
