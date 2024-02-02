@@ -8,4 +8,4 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(BigInteger, primary_key=True)
-    files = relationship("File")
+    files = relationship("FileModel")

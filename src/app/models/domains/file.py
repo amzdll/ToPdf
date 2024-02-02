@@ -7,7 +7,7 @@ from sqlalchemy.sql import func
 from src.app.models.domains.user import Base
 
 
-class File(Base):
+class FileModel(Base):
     __tablename__ = "file_info"
 
     id = Column(BigInteger, primary_key=True)
