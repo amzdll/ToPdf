@@ -1,3 +1,4 @@
+
 import sqlalchemy.exc
 from fastapi import APIRouter, UploadFile, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +8,7 @@ from src.app.api.dependencies.database import get_async_session
 from src.app.core.config import get_app_settings
 from src.app.db.repositories.files import FileRepository
 from src.app.models.schemas.file import FileCreate
-from src.app.services.files import files_service, FileService
+from src.app.services.files import FileService
 from src.utils.converter import PdfConverter
 
 router = APIRouter()
@@ -17,7 +18,7 @@ converter = PdfConverter(settings.imgs_storage_path)
 
 
 @router.post(
-    path="/upload_file/",
+    path="/upload/",
     response_model=FileCreate,
     status_code=status.HTTP_201_CREATED
 
@@ -37,11 +38,12 @@ async def upload_file(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="We're having trouble... Please wait")
 
 
-@router.get("/get_filenames/")
-async def get_filenames(
+@router.get("/files/")
+async def get_files(
         user_id: str,
         session: AsyncSession = Depends(get_async_session)
 ) -> list[str]:
+    print(settings.database_url)
     return await FileService.get_filenames(user_id=user_id, session=session)
 
 
