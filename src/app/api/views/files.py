@@ -1,4 +1,3 @@
-
 import sqlalchemy.exc
 from fastapi import APIRouter, UploadFile, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -28,14 +27,7 @@ async def upload_file(
         file: UploadFile,
         session: AsyncSession = Depends(get_async_session)
 ):
-    try:
-        return await FileService.upload_file(session, user_id, file)
-    except sqlalchemy.exc.IntegrityError:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Who is it?!")
-    except ValueError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="This is all not ok...")
-    except FileNotFoundError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="We're having trouble... Please wait")
+    return await FileService.upload_file(session, user_id, file)
 
 
 @router.get("/files/")
@@ -43,7 +35,6 @@ async def get_files(
         user_id: str,
         session: AsyncSession = Depends(get_async_session)
 ) -> list[str]:
-    print(settings.database_url)
     return await FileService.get_filenames(user_id=user_id, session=session)
 
 

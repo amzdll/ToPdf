@@ -1,10 +1,9 @@
 from datetime import datetime
 from typing import BinaryIO
 
-from fastapi import UploadFile
+from fastapi import UploadFile, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.api.dependencies.database import get_async_session
 from src.app.core.config import get_app_settings
 from src.app.db.repositories.files import file_repository
 from src.app.models.domains.file import FileModel
@@ -41,21 +40,28 @@ class FileService:
     ) -> FileCreate:
         filename: str = await files_service.extract_filename(file.filename)
         new_file = FileModel(
-            file_name=str(filename),
+            filename=str(filename),
             user_id=int(user_id),
             conversion_date=datetime.now()
         )
-        await file_repository.create_file(session, new_file)
-        await files_service.convert_file(user_id, filename, file.file)
-        return FileCreate(
-            filename=filename,
-            conversion_date=datetime.now()
-        )
+
+        try:
+            await file_repository.create_file(session, new_file)
+            await files_service.convert_file(user_id, filename, file.file)
+            return FileCreate(
+                filename=filename,
+                conversion_date=datetime.now()
+            )
+        except FileNotFoundError:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="We're having trouble... Please wait"
+            )
 
     @staticmethod
     async def get_filenames(user_id: str, session: AsyncSession) -> [..., str]:
         files = await file_repository.get_all_files(session, int(user_id))
-        return [file.file_name for file in files]
+        return [file.filename for file in files]
 
 
 files_service = FileService()
