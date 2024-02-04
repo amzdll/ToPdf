@@ -3,12 +3,12 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class FileBase(BaseModel):
+class FileBaseScheme(BaseModel):
     filename: str
     conversion_date: datetime
     user_id: int
 
 
-class FileCreate(BaseModel):
+class FileCreateScheme(BaseModel):
     filename: str
     conversion_date: datetime

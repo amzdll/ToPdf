@@ -1,13 +1,11 @@
-from datetime import datetime
+import os
+from fastapi import HTTPException, status
 from typing import BinaryIO, List
-
-from fastapi import UploadFile, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.core.config import get_app_settings
 from src.app.db.repositories.files import file_repository
-from src.app.models.domains.file import FileModel
-from src.app.models.schemas.file import FileCreate
+from src.app.models.schemas.file import FileBaseScheme
 from src.utils.converter import PdfConverter
 
 settings = get_app_settings()
@@ -26,7 +24,13 @@ class FileService:
             user_id: str,
             filename: str,
             source_data: BinaryIO
-    ):
+    ) -> None:
+        if not os.path.exists(imgs_storage_path):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="We're having trouble... Please wait"
+            )
+
         self.__converter.convert(
             source_data=source_data,
             result_name=f"user_id_{user_id}_{filename}"
@@ -35,33 +39,24 @@ class FileService:
     @staticmethod
     async def upload_file(
             session: AsyncSession,
-            user_id: str,
-            file: UploadFile
-    ) -> FileCreate:
-        filename: str = await files_service.extract_filename(str(file.filename))
-        new_file = FileModel(
-            filename=str(filename),
-            user_id=int(user_id),
-            conversion_date=datetime.now()
+            file_scheme: FileBaseScheme,
+            file_data: BinaryIO
+    ) -> FileBaseScheme:
+        filename: str = await files_service.extract_filename(
+            str(file_scheme.filename)
         )
 
-        try:
-            await file_repository.create_file(session, new_file)
-            await files_service.convert_file(user_id, filename, file.file)
-            return FileCreate(
-                filename=filename,
-                conversion_date=datetime.now()
-            )
-        except FileNotFoundError:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="We're having trouble... Please wait"
-            )
+        await files_service.convert_file(
+            str(file_scheme.user_id), filename, file_data
+        )
+
+        await file_repository.create_file(session, file_scheme)
+        return file_scheme
 
     @staticmethod
     async def get_filenames(user_id: str, session: AsyncSession) -> List[str]:
         files = await file_repository.get_all_files(session, int(user_id))
-        return [file.filename for file in files]
+        return [str(file.filename) for file in files]
 
 
 files_service = FileService()

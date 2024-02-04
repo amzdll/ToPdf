@@ -23,6 +23,7 @@ def get_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
     application.add_exception_handler(
         HTTPException, http_error_handler
     )
