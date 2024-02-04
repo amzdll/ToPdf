@@ -1,6 +1,5 @@
 from enum import Enum
 
-from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings
 
 
@@ -21,11 +20,14 @@ class BaseAppSettings(BaseSettings):
 
     @property
     def database_url_asyncpg(self) -> str:
-        return f"postgresql+asyncpg://{self.db_user}:{self.db_pass}@{self.db_host}:{self.db_port}/{self.db_name}"
+        return f"postgresql+asyncpg://\
+        {self.db_user}:{self.db_pass}@\
+        {self.db_host}:{self.db_port}/{self.db_name}"
 
     @property
     def database_url(self) -> str:
-        return f"postgresql://{self.db_user}:{self.db_pass}@{self.db_host}/{self.db_name}"
+        return f"postgresql://\
+        {self.db_user}:{self.db_pass}@{self.db_host}/{self.db_name}"
 
     class Config:
         env_file = ".env"
