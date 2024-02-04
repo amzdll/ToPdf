@@ -42,13 +42,13 @@ class FileService:
             file_scheme: FileBaseScheme,
             file_data: BinaryIO
     ) -> FileBaseScheme:
-        filename: str = await files_service.extract_filename(
+        file_scheme.filename = await files_service.extract_filename(
             str(file_scheme.filename)
         )
 
         # local saving of a pdf file
         await files_service.convert_file(
-            str(file_scheme.user_id), filename, file_data
+            str(file_scheme.user_id), file_scheme.filename, file_data
         )
 
         # adding pdf file information to db

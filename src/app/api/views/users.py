@@ -7,7 +7,6 @@ from src.app.models.domains.user import User
 
 router = APIRouter()
 
-
 @router.get("/")
 async def get_users(
         user_repository: UserRepository = Depends(),
@@ -23,7 +22,6 @@ async def add_user(
         user_repository: UserRepository = Depends(),
         session: AsyncSession = Depends(get_async_session)
 ):
-    new_user = User(id=int(id))
-    await user_repository.create_user(session, new_user)
+    await user_repository.create_user(session, User(id=int(id)))
 
     return {"message": "User added successfully"}
