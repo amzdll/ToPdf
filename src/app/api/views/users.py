@@ -7,6 +7,7 @@ from src.app.models.domains.user import User
 
 router = APIRouter()
 
+
 @router.get("/")
 async def get_users(
         user_repository: UserRepository = Depends(),
