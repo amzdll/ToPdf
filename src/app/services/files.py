@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import BinaryIO
+from typing import BinaryIO, List
 
 from fastapi import UploadFile, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -38,7 +38,7 @@ class FileService:
             user_id: str,
             file: UploadFile
     ) -> FileCreate:
-        filename: str = await files_service.extract_filename(file.filename)
+        filename: str = await files_service.extract_filename(str(file.filename))
         new_file = FileModel(
             filename=str(filename),
             user_id=int(user_id),
@@ -59,7 +59,7 @@ class FileService:
             )
 
     @staticmethod
-    async def get_filenames(user_id: str, session: AsyncSession) -> [..., str]:
+    async def get_filenames(user_id: str, session: AsyncSession) -> List[str]:
         files = await file_repository.get_all_files(session, int(user_id))
         return [file.filename for file in files]
 
