@@ -11,7 +11,7 @@ class FileModel(Base):
     __tablename__ = "file_info"
 
     id = Column(BigInteger, primary_key=True)
-    file_name = Column(String)
+    filename = Column(String)
     conversion_date = Column(
         DateTime(timezone=True),
         server_default=func.now()

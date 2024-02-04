@@ -1,7 +1,7 @@
 """initialize tables
 
 Revision ID: pe
-Revises: 
+Revises:
 Create Date: 2024-01-27 01:38:09.703308
 
 """
@@ -11,7 +11,7 @@ from alembic import op
 import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
-revision: str = '9ccc834f5fc9'
+revision: str = 'b10845bded33'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -28,7 +28,7 @@ def create_file_info_table() -> None:
     op.create_table(
         "file_info",
         sa.Column("id", sa.BIGINT, primary_key=True),
-        sa.Column("file_name", sa.String, nullable=False),
+        sa.Column("filename", sa.String, nullable=False),
         sa.Column("conversion_date", sa.DateTime, nullable=False),
         sa.Column(
             "user_id",
