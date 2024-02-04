@@ -46,10 +46,12 @@ class FileService:
             str(file_scheme.filename)
         )
 
+        # local saving of a pdf file
         await files_service.convert_file(
             str(file_scheme.user_id), filename, file_data
         )
 
+        # adding pdf file information to db
         await file_repository.create_file(session, file_scheme)
         return file_scheme
 
