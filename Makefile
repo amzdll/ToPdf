@@ -1,6 +1,6 @@
 BOLD = \033[1m
-GREEN = \x1B[32m
-RED = \x1B[31m
+GREEN = \033[32m
+RED = \033[31m
 RESET = \033[0m
 
 WIDTH := $(shell echo "scale=0; $$(tput cols) / 2" | bc)

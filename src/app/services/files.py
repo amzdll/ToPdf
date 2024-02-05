@@ -1,6 +1,7 @@
 import os
-from fastapi import HTTPException, status
 from typing import BinaryIO, List
+
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.app.core.config import get_app_settings
@@ -56,9 +57,14 @@ class FileService:
         return file_scheme
 
     @staticmethod
-    async def get_filenames(user_id: str, session: AsyncSession) -> List[str]:
-        files = await file_repository.get_all_files(session, int(user_id))
-        return [str(file.filename) for file in files]
+    async def get_files_by_user_id(
+            user_id: str,
+            session: AsyncSession
+    ) -> List[FileBaseScheme]:
+        files = await file_repository.get_files_by_user_id(
+            session=session, user_id=int(user_id)
+        )
+        return [FileBaseScheme(**file.model_dump()) for file in files]
 
 
 files_service = FileService()

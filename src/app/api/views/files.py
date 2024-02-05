@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import BinaryIO
+from typing import BinaryIO, List
 
 from fastapi import APIRouter, UploadFile, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,9 +7,9 @@ from starlette import status
 
 from src.app.api.dependencies.database import get_async_session
 from src.app.core.config import get_app_settings
-from src.app.db.repositories.files import FileRepository
 from src.app.models.schemas.file import FileBaseScheme
 from src.app.services.files import FileService
+
 from src.utils.converter import PdfConverter
 
 router = APIRouter()
@@ -35,18 +35,23 @@ async def upload_file(
     return await FileService.upload_file(session, file_scheme, file_data)
 
 
-@router.get("/files/")
+@router.get(
+    "/",
+    response_model=List[FileBaseScheme],
+    status_code=status.HTTP_200_OK
+)
 async def get_files(
         user_id: str,
         session: AsyncSession = Depends(get_async_session)
-) -> list[str]:
-    return await FileService.get_filenames(user_id=user_id, session=session)
+) -> List[FileBaseScheme]:
+    return await FileService.get_files_by_user_id(
+        user_id=user_id, session=session)
 
 
-@router.get("/download/")
+@router.get("/download/",
+            status_code=status.HTTP_200_OK)
 async def download(
-        id: str,
-        file_repository: FileRepository = Depends(),
+        file_scheme: FileBaseScheme,
         session: AsyncSession = Depends(get_async_session)
 ):
     pass

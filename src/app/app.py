@@ -1,3 +1,4 @@
+import aioredis
 from fastapi import FastAPI, HTTPException
 from sqlalchemy.exc import IntegrityError
 
@@ -12,10 +13,13 @@ from src.app.api.errors.unprocessable_entity_error import (
 )
 
 from src.app.api.views.api import router as api_router
+from src.app.core.events import startup_event, shutdown_event
 
 
 def get_application() -> FastAPI:
     application = FastAPI()
+    application.add_event_handler("startup", startup_event)
+    application.add_event_handler("shutdown", shutdown_event)
 
     application.add_middleware(
         CORSMiddleware,

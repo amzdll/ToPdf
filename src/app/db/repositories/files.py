@@ -16,7 +16,7 @@ class FileRepository:
             session.add(FileModel(**file.model_dump()))
 
     @staticmethod
-    async def get_all_files(
+    async def get_files_by_user_id(
             session: AsyncSession, user_id: int
     ) -> Sequence[FileModel]:
         statement = select(FileModel).filter(FileModel.user_id == user_id)

@@ -1,3 +1,5 @@
+from typing import Dict
+
 from sqlalchemy import (
     Column, BigInteger, String,
     ForeignKey, DateTime, Integer
@@ -17,3 +19,11 @@ class FileModel(Base):
         server_default=func.now()
     )
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
+
+    def model_dump(self) -> Dict:
+        return {
+            "id": self.id,
+            "filename": self.filename,
+            "conversion_date": self.conversion_date.isoformat(),
+            "user_id": self.user_id
+        }

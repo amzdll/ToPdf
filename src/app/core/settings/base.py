@@ -12,11 +12,19 @@ class BaseAppSettings(BaseSettings):
 
     imgs_storage_path: str
 
+    redis_host: str
+    redis_port: int
+    redis_name: str
+
     db_user: str
     db_pass: str
     db_host: str
     db_port: str
     db_name: str
+
+    @property
+    def redis_url(self) -> str:
+        return f"redis://{self.redis_host}:{self.redis_port}/{self.redis_name}"
 
     @property
     def database_url_asyncpg(self) -> str:

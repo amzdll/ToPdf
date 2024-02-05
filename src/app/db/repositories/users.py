@@ -1,21 +1,25 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
-from src.app.models.domains.user import User
+from src.app.models.domains.user import UserModel
+from src.app.models.schemas.user import UserBaseScheme
 
 
 class UserRepository:
-    async def create_user(self, session: AsyncSession, user: User) -> None:
+    @staticmethod
+    async def create_user(session: AsyncSession, user: UserBaseScheme) -> None:
         async with session.begin():
-            session.add(user)
+            session.add(UserModel(**user.model_dump()))
 
-    async def get_all_users(self, session: AsyncSession):
-        statement = select(User)
+    @staticmethod
+    async def get_users(session: AsyncSession):
+        statement = select(UserModel)
         result = await session.execute(statement)
         return result.scalars().all()
 
-    async def get_user_by_id(self, session: AsyncSession, user_id: int):
-        statement = select(User).where(User.id == user_id)
+    @staticmethod
+    async def get_user_by_id(session: AsyncSession, user_id: int):
+        statement = select(UserModel).where(UserModel.id == user_id)
         result = await session.execute(statement)
         return result.scalar()
 
