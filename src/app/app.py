@@ -3,11 +3,11 @@ from sqlalchemy.exc import IntegrityError
 
 from fastapi.middleware.cors import CORSMiddleware
 
-from src.app.api.error_handlers.http_error import http_error_handler
-from src.app.api.error_handlers.incorrect_filetype_error import (
+from src.app.api.errors.http_error import http_error_handler
+from src.app.api.errors.incorrect_filetype_error import (
     incorrect_filetype_handler
 )
-from src.app.api.error_handlers.unprocessable_entity_error import (
+from src.app.api.errors.unprocessable_entity_error import (
     unprocessable_entity_error_handler
 )
 
