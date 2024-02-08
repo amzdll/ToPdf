@@ -42,8 +42,9 @@ async def upload_file(
 )
 async def get_files(
         user_id: str,
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
 ) -> List[FileBaseScheme]:
+
     return await FileService.get_files_by_user_id(
         user_id=user_id, session=session)
 

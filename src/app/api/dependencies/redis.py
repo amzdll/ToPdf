@@ -1,7 +1,15 @@
-import aioredis
-from aioredis import Redis
+import redis
+
+from src.app.core.redis_config import get_redis_settings
+
+redis_settings = get_redis_settings()
+
+r = redis.Redis(
+    host=redis_settings.redis_host,
+    port=redis_settings.redis_port,
+    decode_responses=True
+)
 
 
-async def get_redis(settings):
-    redis = aioredis.from_url(settings.redis_url, decode_responses=True)
-    return redis
+def get_redis_connection():
+    return r
