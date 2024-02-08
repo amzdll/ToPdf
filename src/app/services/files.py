@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.core.config import get_app_settings
 from src.app.db.repositories.files import file_repository
 from src.app.models.schemas.file import FileBaseScheme
+from src.app.services.errors.incorrect_filetype import IncorrectFiletype
 from src.utils.converter import PdfConverter
 
 settings = get_app_settings()
@@ -14,7 +15,13 @@ imgs_storage_path: str = settings.imgs_storage_path
 
 
 class FileService:
-    __converter: PdfConverter = PdfConverter(imgs_storage_path)
+    __converter: PdfConverter
+
+    def __init__(self):
+        try:
+            self.__converter = PdfConverter(imgs_storage_path)
+        except ValueError:
+            raise IncorrectFiletype()
 
     @staticmethod
     async def extract_filename(file: str) -> str:
