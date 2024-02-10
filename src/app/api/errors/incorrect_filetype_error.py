@@ -4,7 +4,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 from fastapi import status
 
-from src.app.services.errors.incorrect_filetype import IncorrectFiletype
+from src.app.services.exceptions.incorrect_filetype import IncorrectFiletype
 
 
 async def incorrect_filetype_handler(

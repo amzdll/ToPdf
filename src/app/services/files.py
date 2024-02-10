@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.core.config import get_app_settings
 from src.app.db.repositories.files import file_repository
 from src.app.models.schemas.file import FileBaseScheme
-from src.app.services.errors.incorrect_filetype import IncorrectFiletype
+from src.app.services.exceptions.incorrect_filetype import IncorrectFiletype
 from src.utils.converter import PdfConverter
 
 settings = get_app_settings()
