@@ -35,7 +35,7 @@ loguru = "^0.7.2"
 fastapi-cache2 = "^0.2.1"
 aioredis = "^2.0.1"
 redis = "^5.0.1"
-python-magic = "^0.4.27"
+python-magic-bin = "^0.4.14"
 
 
 [build-system]
